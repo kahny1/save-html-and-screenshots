@@ -3,10 +3,11 @@ const path = require('path');
 const puppeteer = require('puppeteer');
 
 const screenshotDirectory = './screenshots'; // Change this to your desired directory
+const csvFilesDirectory = './csvFiles'; // Directory containing CSV files
 
 
-// this method takes the arguments from the command line
-// `node parse-csv-and-screenshot.js about.csv digital.csv`
+
+// this method uses csv from the csvFiles folders
 
 // Function to parse CSV and return data as an array of objects
 function parseCSV(filePath) {
@@ -95,15 +96,37 @@ if (!fs.existsSync(screenshotDirectory)) {
   fs.mkdirSync(screenshotDirectory);
 }
 
-const csvFiles = process.argv.slice(2);
+// const csvFiles = process.argv.slice(2);
 
-if (csvFiles.length === 0) {
-  console.log("Usage: node script_name.js <csv_file1> <csv_file2> ...");
-} else {
-  (async () => {
-    for (const file of csvFiles) {
-      const parsedData = parseCSV(file);
-      await takeScreenshots(parsedData);
+// if (csvFiles.length === 0) {
+//   console.log("Usage: node script_name.js <csv_file1> <csv_file2> ...");
+// } else {
+//   (async () => {
+//     for (const file of csvFiles) {
+//       const parsedData = parseCSV(file);
+//       await takeScreenshots(parsedData);
+//     }
+//   })();
+// }
+
+fs.readdir(csvFilesDirectory, (err, files) => {
+    if (err) {
+      console.error('Error reading CSV files directory:', err);
+      return;
     }
-  })();
-}
+  
+    const csvFiles = files.filter(file => file.endsWith('.csv'));
+  
+    if (csvFiles.length === 0) {
+      console.log("No CSV files found in the csvFiles directory.");
+      return;
+    }
+  
+    (async () => {
+      for (const file of csvFiles) {
+        const filePath = path.join(csvFilesDirectory, file);
+        const parsedData = parseCSV(filePath);
+        await takeScreenshots(parsedData);
+      }
+    })();
+  });

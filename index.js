@@ -53,5 +53,5 @@ async function screenshotPages(pageArray) {
     }
 }
 
-var pages = ['https://www.capitalone.com/about/', 'https://www.capitalone.com/help-center']
+var pages = ['https://www.capitalone.com/about/', 'https://www.capitalone.com/help-center', 'https://www.capitalone.com/digital/facts2019/faq']
 screenshotPages(pages);
